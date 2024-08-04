@@ -1,1 +1,2 @@
-# hr-management-system
+# HR Dashboard✨
+Creating an intercative dashboard
