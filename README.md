@@ -1,2 +1,2 @@
 # HR Dashboard✨
-Creating an intercative dashboard
+Creating an interactive dashboard
