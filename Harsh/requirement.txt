@@ -1,0 +1,12 @@
+pip install:
+    streamlit
+    google.generativeai
+    PyPDF2
+    python-dotenv
+    openai 
+
+
+After creating virtual environment e1:
+    e1\Scripts\activate.bat
+    streamlit run dashboard.py
+    streamlit run app.py
