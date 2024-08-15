@@ -4,15 +4,14 @@ import PyPDF2 as pdf
 import requests
 from dotenv import load_dotenv
 import os
+import subprocess
 
 st.set_page_config(page_title="HR Dashboard",layout="wide")
 load_dotenv()
 
 with st.sidebar:
     st.title("Hi, HR!")
-    # st .header("Pages:")
     page = st.selectbox("",("Home", "ChatBot Assistant", "Interview Scheduling", "Analytics Dashboard", "Leave Management"),label_visibility = "collapsed",)
-    
     
 if page == "Home":
     st.header("Dashboard")
@@ -21,27 +20,30 @@ if page == "Home":
 elif page == "ChatBot Assistant":
     OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
     OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-    def generate_text(prompt, max_tokens=500, temperature=0.7, top_p=1.0):
+    
+    def generate_text(prompt, max_tokens=1000, temperature=0.8, top_p=0.9):
         headers = {
             "Content-Type": "application/json",
             "api-key": OPENAI_KEY
         }
         data = {
-            "prompt": prompt,
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant. Please provide detailed and comprehensive responses."},
+                {"role": "user", "content": prompt}
+            ],
             "max_tokens": max_tokens,
             "temperature": temperature,
             "top_p": top_p,
             "frequency_penalty": 0,
             "presence_penalty": 0,
-            "best_of": 1,
             "stop": None
         }
         try:
-            with st.spinner("Generating text..."):
-                response = requests.post(f"{OPENAI_ENDPOINT}/openai/deployments/ChatbotCC/completions?api-version=2023-05-15", headers=headers, json=data)
+            with st.spinner("Generating detailed response..."):
+                response = requests.post(f"{OPENAI_ENDPOINT}/openai/deployments/ChatbotCC/chat/completions?api-version=2023-05-15", headers=headers, json=data)
                 response.raise_for_status()
                 result = response.json()
-                return result['choices'][0]['text']
+                return result['choices'][0]['message']['content']
         except requests.exceptions.RequestException as e:
             st.error(f"Error: {e}")
             if response.status_code == 404:
@@ -49,32 +51,45 @@ elif page == "ChatBot Assistant":
             else:
                 st.error(f"Detailed error: {response.text}")
             return None
+
     # Main content for OpenAI service
-    st.header("OpenAI Services")
+    st.header("AI Chatbot Assistant")
 
     if 'generated_text' not in st.session_state:
         st.session_state.generated_text = ""
     if 'prompt' not in st.session_state:
         st.session_state.prompt = ""
 
-    st.info("The default deployment name is set to 'ChatbotCC'.")
+    st.info("This chatbot is designed to provide detailed and comprehensive responses. Feel free to ask complex questions!")
 
-    st.session_state.prompt = st.text_area("Enter a prompt for text generation:", height=150)
+    st.session_state.prompt = st.text_area("Enter your question or prompt (the more specific, the better):", height=150)
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        max_tokens = st.slider("Max Tokens", min_value=50, max_value=500, value=500, step=50)
+        max_tokens = st.slider("Response Length", min_value=100, max_value=2000, value=1000, step=100, help="Higher values allow for longer responses")
     with col2:
-        temperature = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.1)
+        temperature = st.slider("Creativity", min_value=0.5, max_value=1.0, value=0.8, step=0.1, help="Higher values increase response creativity")
     with col3:
-        top_p = st.slider("Top P", min_value=0.0, max_value=1.0, value=1.0, step=0.1)
+        top_p = st.slider("Focus", min_value=0.1, max_value=1.0, value=0.9, step=0.1, help="Lower values make responses more focused")
 
-    if st.button("Generate") and st.session_state.prompt.strip():
+    if st.button("Generate Response") and st.session_state.prompt.strip():
         st.session_state.generated_text = generate_text(st.session_state.prompt, max_tokens, temperature, top_p)
         if st.session_state.generated_text:
-            st.subheader("Generated Text:")
+            st.subheader("Generated Response:")
             st.write(st.session_state.generated_text)
-    
+
+            # Check if response is too short and offer to expand
+            if len(st.session_state.generated_text.split()) < 50:  # Arbitrary threshold
+                if st.button("The response seems brief. Would you like me to expand on it?"):
+                    expansion_prompt = f"Please provide a more detailed explanation of the following: {st.session_state.generated_text}"
+                    expanded_response = generate_text(expansion_prompt, max_tokens, temperature, top_p)
+                    if expanded_response:
+                        st.subheader("Expanded Response:")
+                        st.write(expanded_response)
+
+    st.markdown("---")
+    st.caption("This chatbot uses Azure OpenAI services to generate responses. The quality and length of responses may vary based on the input and settings.")
+
 elif page == "Interview Scheduling":
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -224,12 +239,6 @@ elif page == "Interview Scheduling":
     </style>
     """, unsafe_allow_html=True)
 
-    # App Header
-    st.title("ResumeMaster AI")
-    st.markdown("Elevate your job application with AI-powered resume analysis")
-    st.markdown("---")
-
-    # Main Content
     def main():
         tab1, tab2, tab3 = st.tabs(["📄 Input", "🔍 Analysis", "ℹ️ How It Works"])
         
@@ -333,22 +342,41 @@ elif page == "Interview Scheduling":
     if __name__ == "__main__":
         main()
 
-    # Footer
     st.markdown("---")
     st.markdown("<div style='text-align: center; color: #6c757d;'>© 2024 ResumeMaster AI. All rights reserved.</div>", unsafe_allow_html=True)
 
 elif page == "Analytics Dashboard":
     st.header("Analytics Dashboard")
+    power_bi_embed_url = "https://app.powerbi.com/view?r=eyJrIjoiYWM5YzA1ZGQtOWZhMS00NmJjLTkyMGUtZTRjODg4MGFiZTE2IiwidCI6ImQxZjE0MzQ4LWYxYjUtNGEwOS1hYzk5LTdlYmYyMTNjYmM4MSIsImMiOjEwfQ%3D%3D"
+    st.write(
+        f'<iframe title="CCAnalysis" width="800" height="475" src="https://app.powerbi.com/view?r=eyJrIjoiYWM5YzA1ZGQtOWZhMS00NmJjLTkyMGUtZTRjODg4MGFiZTE2IiwidCI6ImQxZjE0MzQ4LWYxYjUtNGEwOS1hYzk5LTdlYmYyMTNjYmM4MSIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>',
+        unsafe_allow_html=True,
+    )
 
 elif page == "Leave Management":
-    st.header("Leave Management")
+    # Create a styled button-like link using HTML and CSS
+    st.markdown("""
+        <style>
+        .button {
+            margin-top: 40px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e72d2e;
+            background-color: #0e1117;
+            border: 0.5px solid #00F;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            color: #e72d2e;
+            border: 1px solid #e72d2e;
+            text-decoration: none;
+        }
+        </style>
 
-# st.text('Fixed width text')
-# st.markdown('_Markdown_') # see #*
-# st.caption('Balloons. Hundreds of them...')
-# st.title('My title')
-# st.header('My header')
-# st.subheader('My sub')
-# st.code('for i in range(8): foo()')
-
-# # * optional kwarg unsafe_allow_html = True
+        <a href="https://app-example-123.streamlit.app/" class="button" target="_blank">Leave Management</a>
+        """, unsafe_allow_html=True)

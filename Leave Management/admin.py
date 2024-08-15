@@ -9,7 +9,7 @@ from datetime import datetime
 def admin_dashboard():
     st.title("Admin Dashboard")
 
-    menu = ["Leave Overview", "Manage Leaves", "Create User", "User Management"]
+    menu = ["Leave Overview", "Manage Leaves", "Interview Scheduling", "Create User", "User Management"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Leave Overview":
@@ -19,6 +19,32 @@ def admin_dashboard():
         show_leave_trends()
     elif choice == "Manage Leaves":
         manage_leaves()
+    elif choice == "Interview Scheduling":
+        st.markdown("""
+        <style>
+        .button {
+            margin-top: 40px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e72d2e;
+            background-color: #0e1117;
+            border: 0.5px solid #00F;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            color: #e72d2e;
+            border: 1px solid #e72d2e;
+            text-decoration: none;
+        }
+        </style>
+
+        <a href="https://google.com" class="button" target="_blank">Interview Scheduling</a>
+        """, unsafe_allow_html=True)
     elif choice == "Create User":
         create_user()
     elif choice == "User Management":

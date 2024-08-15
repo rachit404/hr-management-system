@@ -7,7 +7,7 @@ from config import COLORSCHEME
 
 def main():
     init_db()  # Initialize the database
-
+    st.set_page_config(page_title="Leave Management")
     # Custom CSS
     st.markdown(
         f"""
