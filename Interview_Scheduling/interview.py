@@ -103,11 +103,16 @@ def interview_scheduling():
         4. 🗣 *HR interview*
         5. ✅ *Final decision*
         """)
-        image_path = "your_image.jpg"
+        
+        # Get the directory of the current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute path to the image
+        image_path = os.path.join(current_dir, "your_image.jpg")
+        # Check if the image file exists and display it
         if os.path.exists(image_path):
             st.image(image_path, caption="AI-generated interview process visualization")
         else:
-            st.error("Image file not found. Please check the file path.")
+            st.error(f"Image file not found at {image_path}. Please check the file path.")
 
     # Display and manage interviews
     st.header("Scheduled Interviews")
