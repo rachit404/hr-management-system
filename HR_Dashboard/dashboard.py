@@ -14,8 +14,26 @@ with st.sidebar:
     page = st.selectbox("",("Home", "ChatBot Assistant", "Interview Scheduling", "Analytics Dashboard", "Leave Management"),label_visibility = "collapsed",)
     
 if page == "Home":
-    st.header("Dashboard")
-    st.subheader("✨Welcome to Company!✨")
+    st.header("Welcome to the HR Dashboard!")
+    st.subheader("✨ Dashboard Overview ✨")
+    st.markdown(
+        """
+        Welcome to our comprehensive HR Dashboard, your one-stop solution for managing all HR-related tasks efficiently. 
+        Explore the features designed to streamline your workflow:
+        """
+    )
+    
+    features = {
+        "🤖 ChatBot Assistant": "Leverage our AI-powered chatbot to assist with HR queries, provide detailed responses, and enhance decision-making.",
+        "📄 Resume Screener": "Automate the resume screening process. Upload resumes and let our AI analyze them against job descriptions, saving you time and effort.",
+        "📊 Analytics Dashboard": "Gain insights into key HR metrics with our interactive analytics dashboard. Visualize data, track performance, and make informed decisions.",
+        "🗓️ Interview Scheduling": "Simplify the interview scheduling process. Our system integrates with calendars and sends automated reminders to candidates and interviewers.",
+        "🏖️ Leave Management": "Manage employee leave requests seamlessly. Track leave balances, approve requests, and maintain accurate records."
+    }
+
+    for feature, description in features.items():
+        st.subheader(feature)
+        st.markdown(description)
     
 elif page == "ChatBot Assistant":
     OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
