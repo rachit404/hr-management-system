@@ -6,6 +6,17 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def table_creation():
+    conn = get_db_connection()
+    conn.execute('''
+    CREATE TABLE IF NOT EXISTS interviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        candidate_name TEXT NOT NULL,
+        interview_date TEXT NOT NULL
+    )
+    ''')
+    conn.commit()
+
 def add_interview(candidate_name, interview_date):
     conn = get_db_connection()
     conn.execute('INSERT INTO interviews (candidate_name, interview_date) VALUES (?, ?)', (candidate_name, interview_date))
