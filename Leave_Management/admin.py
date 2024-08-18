@@ -43,7 +43,7 @@ def admin_dashboard():
         }
         </style>
 
-        <a href="https://google.com" class="button" target="_blank">Interview Scheduling</a>
+        <a href="https://interview-sched.streamlit.app/" class="button" target="_blank">Interview Scheduling</a>
         """, unsafe_allow_html=True)
     elif choice == "Create User":
         create_user()
