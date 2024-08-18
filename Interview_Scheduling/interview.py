@@ -102,7 +102,11 @@ def interview_scheduling():
         4. 🗣 *HR interview*
         5. ✅ *Final decision*
         """)
-        st.image("your_image.jpg", caption="AI-generated interview process visualization")
+        image_path = "your_image.jpg"
+        if os.path.exists(image_path):
+            st.image(image_path, caption="AI-generated interview process visualization")
+        else:
+            st.error("Image file not found. Please check the file path.")
 
     # Display and manage interviews
     st.header("Scheduled Interviews")
