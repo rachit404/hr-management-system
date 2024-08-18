@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
-from hr_database import add_interview, get_interviews, delete_interview, delete_all_interviews
+from hr_database import add_interview, get_interviews, delete_interview, delete_all_interviews, table_creation
 import plotly.express as px
 import pandas as pd
 import smtplib
@@ -40,6 +40,7 @@ def send_sms_via_email(to_email, body, from_email, from_password):
 def interview_scheduling():
     st.set_page_config(page_title="Interview Scheduler", page_icon=":calendar:", layout="wide")
     st.title("📅 Interview Scheduling System")
+    table_creation()
     if 'interviews' not in st.session_state:
         st.session_state.interviews = get_interviews()
     
