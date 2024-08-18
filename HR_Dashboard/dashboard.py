@@ -378,5 +378,5 @@ elif page == "Leave Management":
         }
         </style>
 
-        <a href="https://app-example-123.streamlit.app/" class="button" target="_blank">Leave Management</a>
+        <a href="https://leave-app.streamlit.app/" class="button" target="_blank">Leave Management</a>
         """, unsafe_allow_html=True)
